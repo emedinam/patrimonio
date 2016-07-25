@@ -1,0 +1,189 @@
+<ion-view view-title="{{treeReg.cedula ? treeReg.cedula : 'Registrar Nuevo Arbol'}}">
+    <ion-content class="padding">
+        <form name="treeRegForm" novalidate="true">
+            <div class="row responsive-sm">
+                <div class="col card">
+                    <div class="card">
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Cedula</span>
+                            <input type="text" placeholder="Cedula" name="cedula" ng-model="treeReg.cedula" required>
+                            <div class="tree-error" ng-show="treeRegForm.cedula.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeRegForm.cedula.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-stacked-label">
+                            <span class="input-label">Tipo</span>
+                            <select class="form-control" ng-model="treeReg.tipo.id" placeholder="Cedula" name="tipo" required>
+                                <option ng-repeat="tree in trees" value="{{tree.id}}" ng-selected="tree.id == treeReg.tipo.id" >{{tree.nombreComun}}</option>
+                            </select>
+                            <div class="tree-error" ng-show="treeRegForm.tipo.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeRegForm.tipo.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Observaciones</span>
+                            <textarea placeholder="..." ng-model="treeReg.observaciones"></textarea>
+                        </label>
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Patrimonio</span>
+                            <input type="text" placeholder="Patrimonio" name="patrimonio" ng-model="treeReg.patrimonio" required>
+                            <div class="tree-error" ng-show="treeRegForm.patrimonio.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeRegForm.patrimonio.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <div id="map" class="map"></div>    
+                    </div>
+                </div>
+                <div class="col card">
+                    <label class="">
+                        <span class="item-input item-stacked-label input-label">Foto</span>
+                        <input type="file" nv-file-select="" uploader="uploader" />
+                        <div ng-repeat="item in uploader.queue">
+                            <div ng-show="item.urlHttp">
+                                <img ng-src="{{item.urlHttp}}" width="300" height="350">
+                            </div>
+                            <div ng-show="!item.urlHttp">
+                                <div ng-show="uploader.isHTML5" 
+                                     ng-thumb="{ file: item._file, width: 300, height: 350 }"></div>
+                            </div>
+                        </div>
+                    </label>
+                    <div class="reponsiveTable clearfix card"> 
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Historial de Seguimientos</span>
+                            <div class="panel-heading panel-buttons">
+                                <button class="button button-small icon-left ion-ios-plus-outline button-balanced" ng-click="openSeguimientoShowModal(null, 2)">Nuevo</button>
+                                <button class="button button-small icon-right ion-ios-toggle-outline button-balanced" ng-click="openModal()">Filtros</button>
+                            </div>
+                        </label>
+                        <table ng-table="treeDetail.tableParams" class="table tableList table-striped table-bordered" ng-table-columns-binding="treeDetail.columns">
+                            <tr ng-repeat="seguim in $data" ng-class="{balanced: idSeguimientoEdit == seguim.id}">
+                                <td title="'Fecha'" filter="filters.fecha" sortable="'fecha'" 
+                                    ng-if="true" class="text-center embed-responsive-item">
+                                    {{seguim.fecha}}
+                                </td>
+                                <td title="'Ejecutor'" filter="filters.ejecutor" sortable="'ejecutor'" 
+                                    ng-if="true" class="text-center embed-responsive-item">
+                                    {{seguim.ejecutor}}
+                                </td>
+                                <td title="'Acciones Realizadas'" filter="filters.acciones" sortable="'acciones'" 
+                                    ng-if="true" class="text-center embed-responsive-item">
+                                    {{seguim.acciones}}
+                                </td>
+                                <td class="text-center embed-responsive-item">
+                                    <ul class="button-bar">
+                                        <li>
+                                            <button class="button-icon button-balanced"  ng-click="openSeguimientoShowModal(seguim, 1)">
+                                                <i class="icon ion-ios-eye-outline balanced"></i>
+                                            </button>
+                                            <button class="button-icon button-assertive" ng-click="showConfirmDelete(treeReg)">
+                                                <i class="icon ion-ios-trash-outline assertive"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                        </table> 
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="panel-heading panel-buttons">
+                    <a class="button icon-left ion-ios-close-outline button-balanced" href="#/tab/trees">Cancelar</a>
+                    <button class="button icon-right ion-archive button-balanced" type="submit" ng-click="saveUpdatedTreeReg()">Guardar</button>
+                </div>
+
+            </div>
+        </form>
+    </ion-content>
+</ion-view>
+
+<script id="filtersModal" type="text/ng-template">
+    <ion-modal-view>
+    <ion-header-bar class="bar-balanced">
+    <button class="button button-icon icon ion-ios-close-outline" ng-click="closeModal()"></button>
+    <h1 class="title">¿Que deseo ver en los Seguimientos?</h1>
+    </ion-header-bar>
+    <ion-content>
+    <div class="list">
+    <ion-checkbox ng-repeat="col in treeDetail.columns" ng-if="col.title()" 
+    ng-model-options="{ getterSetter: true }" ng-model="col.show">
+    <ion-toggle ng-checked="filters[col.sortable()] != false ? true : false" ng-click="changeFilters(col.sortable())" ng-disabled="!col.show()">
+    {{col.title()}} 
+    </ion-toggle>
+    </ion-checkbox>
+    </div>
+    </ion-content>
+    </ion-modal-view>
+</script>
+
+<script id="seguimientoShowModal" type="text/ng-template">
+<ion-modal-view>
+    <ion-header-bar class="bar-balanced">
+        <button class="button button-icon icon ion-ios-close-outline" ng-click="closeSeguimientoShowModal()"></button>
+        <h1 class="title">{{type == 0|| type==1 ? seguimEdit.fecha : 'Nuevo Seguimiento'}}</h1>
+    </ion-header-bar>
+    <ion-content>
+        <form name="seguimForm" novalidate="true">
+            <div class="row responsive-sm">
+                <div class="col card">
+                    <div class="card">
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Fecha</span>
+                            <input type="text" placeholder="Fecha" name="fecha" ng-model="seguimEdit.fecha" required>
+                            <div class="tree-error" ng-show="seguimForm.fecha.$invalid && showValidationSeguim">
+                                <small class="tree-error" ng-show="seguimForm.fecha.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Ejecutor</span>
+                            <input type="text" placeholder="Ejecutor" name="ejecutor" ng-model="seguimEdit.ejecutor" required>
+                            <div class="tree-error" ng-show="seguimForm.ejecutor.$invalid && showValidationSeguim">
+                                <small class="tree-error" ng-show="seguimForm.ejecutor.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Acciones</span>
+                            <textarea placeholder="..." ng-model="seguimEdit.acciones"></textarea>
+                        </label>
+
+                    </div>
+                </div>
+                <div class="col card">
+                    <span class="item-stacked-label input-label">Foto</span>
+                    <input type="file" nv-file-select="" uploader="uploaderSeguim" />
+
+                    <div ng-repeat="item in uploaderSeguim.queue">
+                        <div ng-show="item.urlHttp">
+                            <img ng-src="{{item.urlHttp}}" width="300" height="350">
+                        </div>
+                        <div ng-show="!item.urlHttp">
+                            <div ng-show="uploaderSeguim.isHTML5" 
+                                 ng-thumb="{ file: item._file, width: 300, height: 350 }"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card">
+                <div class="panel-heading panel-buttons">
+                    <button class="button icon-left ion-ios-close-outline button-balanced" ng-click="closeSeguimientoShowModal()">Cerrar</button>
+                    <button class="button icon-right ion-archive button-balanced" ng-show="type == 1 || type == 2" type="submit" ng-click="saveUpdatedSeguim()">Guardar</button>
+                </div>
+
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>
+</script>

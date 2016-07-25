@@ -1,0 +1,65 @@
+<ion-view view-title="Arboles Registrados">
+    <ion-content>
+        <div class="panel-heading panel-buttons">
+            <a class="button button-small icon-left ion-ios-plus-outline button-balanced" href="#/tab/treesReg/">Nuevo</a>
+            <button class="button button-small icon-right ion-ios-toggle-outline button-balanced" ng-click="openModal()">Filtros</button>
+        </div>
+        <div class="reponsiveTable clearfix card"> 
+            <table ng-table="treesRegList.tableParams" class="table tableList table-striped table-bordered" ng-table-columns-binding="treesRegList.columns">
+                <tr ng-repeat="treeReg in $data" ng-class="{balanced: idTreeRegEdit == treeReg.id}">
+                    <td>
+                        <img class="image-tree" ng-src="{{treeReg.foto}}"/>
+                    </td>
+                    <td title="'Cedula'" filter="filters.cedula" sortable="'cedula'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{treeReg.cedula}}
+                    </td>
+                    <td title="'Nombre Común'" filter="filters.nombreComun" sortable="'nombreComun'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{treeReg.tipo.nombreComun}}
+                    </td>
+                    <td title="'Observaciones'" filter="filters.observaciones" sortable="'observaciones'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{treeReg.observaciones}}
+                    </td>
+                    <td title="'Patrimonio'" filter="filters.patrimonio" sortable="'patrimonio'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{treeReg.patrimonio}}
+                    </td>
+                    <td class="text-center embed-responsive-item">
+                        <ul class="button-bar">
+                            <li>
+                                <a class="button-icon button-balanced" href="#/tab/treesReg/{{treeReg.id}}">
+                                    <i class="icon ion-ios-eye-outline balanced"></i>
+                                </a>
+                                <button class="button-icon button-assertive" ng-click="showConfirmDelete(treeReg)">
+                                    <i class="icon ion-ios-trash-outline assertive"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+            </table> 
+        </div>
+    </ion-content>
+</ion-view>
+
+<script id="filtersModal" type="text/ng-template">
+    <ion-modal-view>
+    <ion-header-bar class="bar-balanced">
+    <button class="button button-icon icon ion-ios-close-outline" ng-click="closeModal()"></button>
+    <h1 class="title">¿Que deseo ver?</h1>
+    </ion-header-bar>
+    <ion-content>
+    <div class="list">
+    <ion-checkbox ng-repeat="col in treesRegList.columns" ng-if="col.title()" 
+    ng-model-options="{ getterSetter: true }" ng-model="col.show">
+    <ion-toggle ng-checked="filters[col.sortable()] != false ? true : false" ng-click="changeFilters(col.sortable())" ng-disabled="!col.show()">
+    {{col.title()}} 
+    </ion-toggle>
+    </ion-checkbox>
+    </div>
+    </ion-content>
+    </ion-modal-view>
+</script>

@@ -1,0 +1,158 @@
+<ion-view view-title="Diccionario de Arboles">
+    <ion-content>
+        <div class="panel-heading panel-buttons">
+            <button class="button button-small icon-left ion-ios-plus-outline button-balanced" ng-click="openTreeShowModal(tree, 2)">Nuevo</button>
+            <button class="button button-small icon-right ion-ios-toggle-outline button-balanced" ng-click="openModal()">Filtros</button>
+        </div>
+        <div class="reponsiveTable clearfix card"> 
+            <table ng-table="dictionaryList.tableParams" class="table tableList table-striped table-bordered" ng-table-columns-binding="dictionaryList.columns">
+                <tr ng-repeat="tree in $data" ng-class="{balanced: idTreeEdit == tree.id}">
+                    <td>
+                        <img class="image-tree" ng-src="{{tree.foto}}"/>
+                    </td>
+                    <td title="'Nombre Común'" filter="filters.nombreComun" sortable="'nombreComun'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{tree.nombreComun}}
+                    </td>
+                    <td title="'Nombre Científico'" filter="filters.nombreCientifico" sortable="'nombreCientifico'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{tree.nombreCientifico}}
+                    </td>
+                    <td title="'Familia'" filter="filters.familia" sortable="'familia'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{tree.familia}}
+                    </td>
+                    <td title="'Tipo'" filter="filters.tipo" sortable="'tipo'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{tree.tipo}}
+                    </td>
+                    <td title="'Descripción'" filter="filters.contenidoInformativo" sortable="'contenidoInformativo'" 
+                        ng-if="true" class="text-center embed-responsive-item">
+                        {{tree.contenidoInformativo}}
+                    </td>
+                    <td class="text-center embed-responsive-item">
+                        <ul class="button-bar">
+                            <li>
+                                <button class="button-icon button-balanced" ng-click="openTreeShowModal(tree, 0)">
+                                    <i class="icon ion-ios-eye-outline balanced"></i>
+                                </button>
+                                <button class="button-icon button-balanced" ng-click="openTreeShowModal(tree, 1)">
+                                    <i class="icon ion-ios-compose balanced"></i>
+                                </button>
+                                <button class="button-icon button-assertive" ng-click="showConfirmDelete(tree)">
+                                    <i class="icon ion-ios-trash-outline assertive"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+            </table> 
+        </div>
+    </ion-content>
+</ion-view>
+
+<script id="treeShowModal" type="text/ng-template">
+<ion-modal-view>
+    <ion-header-bar class="bar-balanced">
+        <button class="button button-icon icon ion-ios-close-outline" ng-click="closeTreeShowModal()"></button>
+        <h1 class="title">{{type == 0|| type==1 ? treeEdit.nombreComun : 'Nuevo Arbol'}}</h1>
+    </ion-header-bar>
+    <ion-content>
+        <form name="treeForm" novalidate="true">
+            <div class="row responsive-sm">
+                <div class="col card">
+                    <div class="card">
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Nombre Común</span>
+                            <input type="text" placeholder="Nombre Común" name="nombreComun" ng-model="treeEdit.nombreComun" ng-disabled="type == 0" required>
+                            <div class="tree-error" ng-show="treeForm.nombreComun.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeForm.nombreComun.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Nombre Científico</span>
+                            <input type="text" placeholder="Nombre Científico" name="nombreCientifico" ng-model="treeEdit.nombreCientifico" ng-disabled="type == 0" required>
+                            <div class="tree-error" ng-show="treeForm.nombreCientifico.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeForm.nombreCientifico.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-stacked-label">
+                            <span class="input-label">Familia</span>
+                            <select class="form-control" ng-model="treeEdit.familia" ng-disabled="type == 0" name="familia" required>
+                                <option ng-repeat="familia in familias" value="{{familia.nombreFamilia}}" ng-selected="familia.nombreFamilia == treeEdit.familia" >{{familia.nombreFamilia}}</option>
+                            </select>
+                            <div class="tree-error" ng-show="treeForm.familia.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeForm.familia.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-stacked-label">
+                            <span class="input-label">Tipo</span>
+                            <select class="form-control" ng-model="treeEdit.tipo" ng-disabled="type == 0" name="tipo" required>
+                                <option ng-repeat="tipo in tipos" value="{{tipo.nombreTipo}}" ng-selected="tipo.nombreTipo == treeEdit.tipo" >{{tipo.nombreTipo}}</option>
+                            </select>
+                            <div class="tree-error" ng-show="treeForm.tipo.$invalid && showValidation">
+                                <small class="tree-error" ng-show="treeForm.tipo.$error.required">
+                                    (*)
+                                </small>
+                            </div>
+                        </label>
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Contenido Informativo</span>
+                            <textarea placeholder="..." ng-model="treeEdit.contenidoInformativo" ng-disabled="type == 0"></textarea>
+                        </label>
+
+                    </div>
+                </div>
+                <div class="col card">
+                    <span class="item-stacked-label input-label">Foto</span>
+                    <input type="file" nv-file-select="" uploader="uploader" />
+
+                    <div ng-repeat="item in uploader.queue">
+                        <div ng-show="item.urlHttp">
+                            <img ng-src="{{item.urlHttp}}" width="300" height="350">
+                        </div>
+                        <div ng-show="!item.urlHttp">
+                            <div ng-show="uploader.isHTML5" 
+                                 ng-thumb="{ file: item._file, width: 300, height: 350 }"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card">
+                <div class="panel-heading panel-buttons">
+                    <button class="button icon-left ion-ios-close-outline button-balanced" ng-click="closeTreeShowModal()">Cerrar</button>
+                    <button class="button icon-right ion-archive button-balanced" ng-show="type == 1 || type == 2" type="submit" ng-click="saveUpdatedTree()">Guardar</button>
+                </div>
+
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>
+</script>
+
+<script id="filtersModal" type="text/ng-template">
+    <ion-modal-view>
+    <ion-header-bar class="bar-balanced">
+    <button class="button button-icon icon ion-ios-close-outline" ng-click="closeModal()"></button>
+    <h1 class="title">¿Que deseo ver?</h1>
+    </ion-header-bar>
+    <ion-content>
+    <div class="list">
+    <ion-checkbox ng-repeat="col in dictionaryList.columns" ng-if="col.title()" 
+    ng-model-options="{ getterSetter: true }" ng-model="col.show">
+    <ion-toggle ng-checked="filters[col.sortable()] != false ? true : false" ng-click="changeFilters(col.sortable())" ng-disabled="!col.show()">
+    {{col.title()}} 
+    </ion-toggle>
+    </ion-checkbox>
+    </div>
+    </ion-content>
+    </ion-modal-view>
+</script>

@@ -1,0 +1,44 @@
+<ion-view view-title="Autenticación">
+    <ion-content>
+        <div class="login-wrapper balanced">
+            <form name="signInForm" ng-submit="signIn()" novalidate="true">
+                <div class="list padding-horizontal padding-vertical">
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Usuario: </span>
+                        <input type="email" name="username" ng-model="username" placeholder="usuario@dominio.ecu" required="true">
+                        <div class="login-error" ng-show="signInForm.username.$invalid && showValidation">
+                            <small class="login-error" ng-show="signInForm.username.$error.required">
+                                Usuario Requerido. (*)
+                            </small>
+                        </div>
+                        <div class="login-error" ng-show="signInForm.username.$invalid-email && showValidation">
+                            <small class="login-error"
+                                   ng-show="signInForm.username.$error.email">
+                                Dirección de correo invalida.
+                            </small>
+                            
+                        </div>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Contraseña: </span>
+                        <input type="password" name="password" ng-model="password" placeholder="******" required="true">
+                        <div class="login-error" ng-show="signInForm.password.$invalid && showValidation">
+                            <small class="login-error" ng-show="signInForm.password.$error.required">
+                                Contraseña Requerida. (*)
+                            </small>
+                            
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="login-buttons">
+                    <button type="submit" class="button icon-left ion-lock-combination button-balanced">Entrar</button>
+                    <a class="button icon-right ion-clipboard button-balanced" ng-click="openModal()">
+                        Registrarse
+                    </a>
+                </div>
+            </form>
+        </div>
+    </ion-content>
+</ion-view>
+

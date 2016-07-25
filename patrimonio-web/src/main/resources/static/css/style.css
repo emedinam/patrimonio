@@ -1,0 +1,101 @@
+
+.login-wrapper{
+    position: absolute;
+    top: 5%;
+    left: 10%;
+    right: 10%;
+    border: solid 1px;
+    border-bottom-right-radius: 2em;
+    border-bottom-left-radius: 2em;
+}
+.login-buttons{
+    text-align: center;
+    margin-bottom: 2px;
+}
+.login-error{
+    float: left;
+    width: 100%;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0; 
+    color: red;
+}
+
+.tree-error{
+    float: right;
+    width: 100%;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0; 
+    color: red;
+}
+
+.reponsiveTable table>thead>tr>th {
+    font-weight: bold;
+}
+
+.image-tree {
+    top: 1px;
+    left: 1px;
+    max-width: 80px;
+    max-height: 80px;
+    width: 80px;
+    height: 80px;
+}
+
+.image-show {
+    top: 1px;
+    left: 1px;
+    max-width: 400px;
+    max-height: 400px;
+    width: 400px;
+    height: 400px;
+}
+
+.panel-buttons {
+    text-align: center;
+}
+
+@media only screen and (max-width: 800px){
+    .reponsiveTable table,
+    .reponsiveTable thead,
+    .reponsiveTable tbody,
+    .reponsiveTable th,
+    .reponsiveTable td,
+    .reponsiveTable tr {
+        display: block;
+    }
+    /* Hide table sorting (but not display: none;, for accessibility) */
+    /* Note: we're hiding the sorting because it looks terrible! Making this pretty is an exercise for the reader*/
+    .reponsiveTable thead tr:first-child {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    .reponsiveTable tr {
+        border: 1px solid #ccc;
+    }
+    .reponsiveTable table>tbody>tr>td,
+    .reponsiveTable table>thead>tr>th {
+        /* Behave  like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+        text-align: left;
+    }
+    .reponsiveTable table>tbody>tr>td:before,
+    .reponsiveTable table>thead>tr>th:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        /* Label the data */
+        content: attr(data-title-text);
+    }
+}
